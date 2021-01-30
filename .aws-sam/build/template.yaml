@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'redirection
+
+  Sample SAM Template for redirection
+
+  '
+Resources:
+  BasedRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: BasedRequestFunction
+      Handler: app.handler
+      Runtime: nodejs12.x
+      Timeout: 3
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Method: get
+            Path: /request
+  RedirectRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: RedirectRequestFunction
+      Handler: app.handler
+      Runtime: nodejs12.x
+      Timeout: 28
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Method: get
+            Path: /redirect
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: redirect
+Outputs:
+  HelloWorldApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
